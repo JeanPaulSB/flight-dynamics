@@ -1,7 +1,7 @@
-%{ faircraft.m
- function to define the mathematical model for a fixed wing aircraft
+% faircraft.m
+% function to define the mathematical model for a fixed wing aircraft
 % usage
-% [xdot,y] = faircraft(t,x,delta,Vwe,deltaCGb,aircraft)4
+% [xdot,y] = faircraft(t,x,delta,Vwe,deltaCGb,aircraft)
 % where
 % t : time (s)
 % x = [pe; Phi; Vb; Omegab] : state vector
@@ -29,16 +29,22 @@
 %    Vbdot = [udot; vdot; wdot] : airfract velocity respect to earth expressed in body frame (m/s²)
 %    Omegabdot = [pdot;qdot;rdot] : derivative of aircraft angular velocity relative to earth (rad/s²)
 % y = [V; alpha; beta] : airspeed (m/s), angle of attack (rad), angle of sideslip (rad)
- delta
- Vwe
-deltaCGb
-%} aircraft
+% delta
+% Vwe
+% deltaCGb
+% aircraft
 function [xdot,y] = faircraft(t,x,delta,Vwe,deltaCGb,aircraft)
   % extract components of x and delta
   pe = x(1:3,1);
   Phi = x(4:6,1);
   Vb = x(7:9,1); 
   Omegab = x(10:12,1);
+  deltat = delta(1,1);
+  deltaaero = delta(2:,1)
+  
+  
+  % evaluate translational kinematics
+  pedot = Cbe'
 
   xdot = 3
   y = 4
