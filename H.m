@@ -23,33 +23,34 @@
 ## Created: 2024-03-05
 
 % DCM.m
-% function to calculate direction cosine matrix
+% function to calculate Hmatrix such that Phidot = Hmatrix*Omegab
 % usage
-%   Cbe = DCM(Phi)
+%   Hmatrix = H(Phi)
 % where
 %   Phi = [phi;theta;psi] : Euler angles (rad)
 %     with
 %       theta : pitch (rad)
 %       psi : yaw or heading (rad)
-%   Cbe : direction cosine matrix
+%   Hmatrix : matrix such that Phidot = Hmatrix*Omegab
 
-function Cbe = DCM (Phi)
+function Hmatrix = H(Phi)
   % extract euler angles from Phi
   phi = Phi(1,1);
   theta = Phi(2,1);
   psi = Phi(3,1);
   
   ctheta = cos(theta);
-  stheta = sine(theta);
-  cphi = cos(phi);
-  sphi = sin(phi);
-  cpsi = cos(psi);
-  spsi = sin(psi);
+  ttheta = tan(theta);
+  cphi = cos(phi); 
+  sphi = sin(phi); 
   
-  Cbe = [ 
-  ctheta*cpsi   ctheta*spsi   -stheta;
- -cphi*spsi+sphi*stheta*cpsi  -cphi*cpsi+sphi*stheta*spsi sphi*ctheta;
-  sphi*spsi+cphi*stheta*cpsi   sphi*cpsi+cphi*stheta*spsi cphi*ctheta
+  % calculate Hmatrix
+
+  
+ Hmatrix = [ 
+   1  ttheta*sphi ttheta*cphi;
+   0  cphi        -sphi;
+   0  sphi/ctheta cphi/ctheta
 ];  
 
 

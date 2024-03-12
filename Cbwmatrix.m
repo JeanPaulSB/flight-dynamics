@@ -14,44 +14,36 @@
 ## along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ## -*- texinfo -*-
-## @deftypefn {} {@var{retval} =} DCM (@var{input1}, @var{input2})
+## @deftypefn {} {@var{retval} =} Cwbmatrix (@var{input1}, @var{input2})
 ##
 ## @seealso{}
 ## @end deftypefn
 
 ## Author: jeanpaul <jeanpaul@jeanpaul-VivoBook-ASUSLaptop-X512DA-X512DA>
-## Created: 2024-03-05
+## Created: 2024-03-07
 
-% DCM.m
-% function to calculate direction cosine matrix
+% Cbwmatrix.m
+% function to calculate rotation matrix from relative wind frame to body frame
 % usage
-%   Cbe = DCM(Phi)
+%   Cbw = Cbwmatrix(alpha,beta)
 % where
-%   Phi = [phi;theta;psi] : Euler angles (rad)
-%     with
-%       theta : pitch (rad)
-%       psi : yaw or heading (rad)
-%   Cbe : direction cosine matrix
-
-function Cbe = DCM (Phi)
-  % extract euler angles from Phi
-  phi = Phi(1,1);
-  theta = Phi(2,1);
-  psi = Phi(3,1);
+%   alpha: angle of attack (rad)
+%   beta: angle of sideslip (rad)
+%   Cbw: transformation matrix from wind frame to body frame
+function Cbw = Cbwmatrix(alpha,beta)
   
-  ctheta = cos(theta);
-  stheta = sine(theta);
-  cphi = cos(phi);
-  sphi = sin(phi);
-  cpsi = cos(psi);
-  spsi = sin(psi);
+  cbeta = cos(beta);
+  sbeta = sin(beta);
+  calpha = cos(alpha);
+  salpha = sin(alpha);
   
-  Cbe = [ 
-  ctheta*cpsi   ctheta*spsi   -stheta;
- -cphi*spsi+sphi*stheta*cpsi  -cphi*cpsi+sphi*stheta*spsi sphi*ctheta;
-  sphi*spsi+cphi*stheta*cpsi   sphi*cpsi+cphi*stheta*spsi cphi*ctheta
-];  
+  Cbw = [calpha * cbeta   -calpha*sbeta     -salpha;
+        sbeta     cbeta     0;
+        salpha * cbeta  -salpha * sbeta   calpha
+        
+        ];
+  
+  
+  
 
-
-
-endfunction
+end

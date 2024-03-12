@@ -36,20 +36,61 @@
 function [xdot,y] = faircraft(t,x,delta,Vwe,deltaCGb,aircraft)
   % extract components of x and delta
   pe = x(1:3,1);
+  h = -pe(3);
   Phi = x(4:6,1);
   Vb = x(7:9,1); 
   Omegab = x(10:12,1);
   deltat = delta(1,1);
   deltaaero = delta(2:,1)
   
-  
+  Cbe = DCM(Phi);
   % evaluate translational kinematics
-  pedot = Cbe'
-
-  xdot = 3
-  y = 4
+  pedot = Cbe'*Vb;
+  % evaluate rotational kinematics
+  Phidot = H(Phi)*Omegab;
+  % compute weight
+  Ge = [0; 0; aircraft.g]
+  Gb = Cbe*Ge;
+  Wb = aircraft.m * Gb;
+  % compute airspeed
+  V = norm(Vrelb);
+  % compute aerodynamic forces and moments
+  % compute relative velocity
+  Vrelb = Vb-Cbe*Vwe;
+  % compute angle of attack
+  theta = atan(Vrelb(3)/Vrelb(1));
+  % sideslip angle
+  sideslip = asin(Vrelb(2)/V);
+  % derivative of relative velocity
+  Vrelbdot = Vbdot+Omegab+cross(Omegab,Cbe*Vwe);
+  % compute
+  alphadot = (Vrelbdot(3) * Vrelb(1) - Vrelbdot(1) * Vrelb(3)) / (Vrelb(1)^2);
   
-end
+  % compute standard atmosphere parameters
+  [rho,P,T,a] = atmosphere(h);
+  
+  % compute mach number
+  M = V / a;
+  % dynamic pressure
+  qbar = 0.5*rho*V^2
+  % aerodynamic forces and moments
+  [Fab,Mab] = aerodynamics(V,alpha,beta,alphadot,Omegab,deltaaero,qbar,M,deltaCGb,aircraft);
+  [Ftb,Mtb] = propulsion(deltat,deltaCGb,aircraft);
+   
+   % net force expressed in body frame
+   Fnetb = Wb + Fab + Ftb;
+  
+   % compute translational dynamics
+   Vbdot = Fnetb / aircraft.m - cross(Omegab,Vb);
+   
+   % net moment expressed in body frame
+   Mnetb = Mab + Mtb
+   
+   % rotational dynamics
+   Omegabdot = aircraft.Ibinv * (Mnetb - cross(Omegab,aircraft.Ib*Omegab));
+   
+  
+end 
 
 
 
