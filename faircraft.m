@@ -33,7 +33,11 @@
 % Vwe
 % deltaCGb
 % aircraft
+
 function [xdot,y] = faircraft(t,x,delta,Vwe,deltaCGb,aircraft)
+  % declare Vbdot as global variable
+  global Vbdot;
+  
   % extract components of x and delta
   pe = x(1:3,1);
   h = -pe(3);
@@ -88,6 +92,9 @@ function [xdot,y] = faircraft(t,x,delta,Vwe,deltaCGb,aircraft)
    
    % rotational dynamics
    Omegabdot = aircraft.Ibinv * (Mnetb - cross(Omegab,aircraft.Ib*Omegab));
+   
+   xdot = [pedot; Phidot; Vbdot; Omegabdot];
+   y = [V; alpha; beta]
    
   
 end 
